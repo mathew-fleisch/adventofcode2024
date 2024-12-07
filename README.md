@@ -42,3 +42,43 @@ Answer: 161
 ~/src/adventofcode2024 $ ./03/answer2.sh 
 Answer: 48
 ```
+
+## Day 04
+
+For [today's challenge](04), I split the data into a grid using an associative array where the key includes the x,y coordinates to each character. A nested for loop iterates around a potential match in the 8 possible neighbors, and tests if the word is XMAS. The second challenge didn't require the nested loop as there were only four possible matches.
+
+
+```bash
+
+Total: 18
+~/src/adventofcode2024 $ ./04/answer1.sh
+MMMSXXMASM
+MSAMXMSMSA
+AMXSXMAAMM
+MSAMASMSMX
+XMASAMXAMM
+XXAMMXXAMA
+SMSMSASXSS
+SAXAMASAAA
+MAMMMXMMMM
+MXMXAXMASX
+
+Total: 18
+
+
+~/src/adventofcode2024 $ ./04/answer2.sh
+MMMSXXMASM
+MSAMXMSMSA ~/src/adventofcode2024
+ % ./04/answer1.sh
+MMMSXXMASM
+AMXSXMAAMM
+MSAMASMSMX
+XMASAMXAMM
+XXAMMXXAMA
+SMSMSASXSS
+SAXAMASAAA
+MAMMMXMMMM
+MXMXAXMASX
+
+Total: 9
+```
