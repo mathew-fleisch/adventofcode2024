@@ -26,3 +26,19 @@ row[5]: 3:5 => 9
 row[6]: 4:9 => 4
 Total Frequency: 31
 ```
+
+## Day 02
+
+skipped for now...
+
+## Day 03
+
+For [today's challenge](03), I used regular expression matching in sed and grep to make the data easy to loop over.
+
+```bash
+~/src/adventofcode2024 $ ./03/answer1.sh             
+Answer: 161
+
+~/src/adventofcode2024 $ ./03/answer2.sh 
+Answer: 48
+```
