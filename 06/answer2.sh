@@ -1,4 +1,12 @@
 #!/usr/bin/env bash
+convertsecs() {
+  ((h=${1}/3600))
+  ((m=(${1}%3600)/60))
+  ((s=${1}%60))
+  printf "%02d:%02d:%02d\n" $h $m $s
+}
+
+started=$(date +%s)
 
 aoc_input_file=${1:-06/example.txt}
 cat $aoc_input_file && echo 
@@ -45,7 +53,11 @@ display_grid() {
 	for ((j=0; j<height; j++)); do
 		grid=""
 		for ((i=0; i<width; i++)); do
-			grid="${grid}${matrix[$j.$i]}"
+			if [[ ${obs["$j.$i"]} -eq 1 ]]; then
+				grid="${grid}0"
+			else
+				grid="${grid}${matrix[$j.$i]}"
+			fi
 		done
 		echo "$grid"
 	done
@@ -71,6 +83,8 @@ check_loop() {
 	direction=$1
 	this_y=$2
 	this_x=$3
+	obs_y=$4
+	obs_x=$5
 	position="$this_y.$this_x"
 	local y
 	local x
@@ -80,6 +94,11 @@ check_loop() {
 	turn="."
 	nexty=0
 	nextx=0
+	declare -A visited_so_far
+	for key in "${!visited[@]}"; do
+		visited_so_far[$key]=${visited[$key]}
+	done
+	visited_so_far["$obs_y.$obs_x"]="#"
 
 	while [[ $nexty -lt $height ]] && [[ $nextx -lt $width ]] && [[ $nexty -ge 0 ]] && [[ $nextx -ge 0 ]]; do
 		# this_grid="$(display_grid)"
@@ -87,6 +106,9 @@ check_loop() {
 		# echo "$iteration:" && echo "$this_grid"
 		# echo "$iteration"
 		if [[ $iteration -gt $((width*height)) ]]; then
+			# echo "THIS SHOULD NOT HAPPEN"
+			# exit 1
+			echo "$obs_y.$obs_x" >> /tmp/what.txt
 			echo 1
 			return
 		fi
@@ -119,21 +141,19 @@ check_loop() {
 			;;
 		esac
 
-		# If a previously visited direction is "to the right" of the current direction,
-		# a new obstacle in "the next" position would cause the character to get stuck
-
-		if [[ ${visited["$nexty.$nextx"]} == $direction ]]; then
+		if [[ ${visited_so_far["$nexty.$nextx"]} == $direction ]]; then
 			# echo "Loop1 detected"
 			echo 1
 			return
 		fi
 
 
-		if [[ "${matrix[$nexty.$nextx]}" == "#" ]]; then
+		if [[ "${visited_so_far[$nexty.$nextx]}" == "#" ]]; then
 			direction=$turn
 			continue
 		fi
 		
+		visited_so_far["$y.$x"]=$direction
 		position="$nexty.$nextx"
 		# sleep 1
 		((iteration++))
@@ -144,31 +164,33 @@ check_loop() {
 
 
 
-grid=""
-for ((j=0; j<height; j++)); do
-	grid=""
-	for ((i=0; i<width; i++)); do
-		grid="${grid}${visited[$j.$i]}"
-	done
-	echo "$grid"
-done
+# grid=""
+# for ((j=0; j<height; j++)); do
+# 	grid=""
+# 	for ((i=0; i<width; i++)); do
+# 		grid="${grid}${visited[$j.$i]}"
+# 	done
+# 	echo "$grid"
+# done
 
 
 total=0
 iteration=0
 direction=$up
 position="$starty.$startx"
-# echo "check_loop $direction $starty $startx"
-# check_loop $direction $starty $startx
 
 nexty=0
 nextx=0
 
 while [[ $nexty -lt $height ]] && [[ $nextx -lt $width ]] && [[ $nexty -ge 0 ]] && [[ $nextx -ge 0 ]]; do
-	this_grid="$(display_grid)"
-	clear
-	echo "$iteration:" && echo "$this_grid"
-	echo "$iteration: $total"
+	now=$(date +%s)
+	diff=$((now-started))
+	# if [[ $((iteration%100)) -eq 0 ]]; then
+		grid="$(display_grid)"
+		clear
+		echo "$grid"
+		echo "$(convertsecs $diff)[$iteration]: $direction $y.$x => $nexty.$nextx"
+	# fi
 	loop=""
 	IFS="." read -r y x <<< "$position"
 	case $direction in
@@ -177,31 +199,34 @@ while [[ $nexty -lt $height ]] && [[ $nextx -lt $width ]] && [[ $nexty -ge 0 ]] 
 		nexty=$((y-1))
 		nextx=$x
 		turn=">"
-		could_loop=$(check_loop $turn $nexty $nextx)
+		could_loop=$(check_loop $turn $y $x $nexty $nextx)
 		;;
 		">")
 		# echo "right"
 		nexty=$y
 		nextx=$((x+1))
 		turn="v"
-		could_loop=$(check_loop $turn $nexty $nextx)
+		could_loop=$(check_loop $turn $y $x $nexty $nextx)
 		;;
 		"v")
 		# echo "down"
 		nexty=$((y+1))
 		nextx=$x
 		turn="<"
-		could_loop=$(check_loop $turn $nexty $nextx)
+		could_loop=$(check_loop $turn $y $x $nexty $nextx)
 		;;
 		"<")
 		# echo "left"
 		nexty=$y
 		nextx=$((x-1))
 		turn="^"
-		could_loop=$(check_loop $turn $nexty $nextx)
+		could_loop=$(check_loop $turn $y $x $nexty $nextx)
 		;;
 	esac
-	total=$((total+could_loop))
+	# total=$((total+could_loop))
+	if [[ $could_loop -gt 0 ]]; then
+		obs["$nexty.$nextx"]=1
+	fi
 
 	if [[ "${matrix[$nexty.$nextx]}" == "#" ]]; then
 		direction=$turn
@@ -220,18 +245,32 @@ while [[ $nexty -lt $height ]] && [[ $nextx -lt $width ]] && [[ $nexty -ge 0 ]] 
 	((iteration++))
 done
 
-# for key in "${!obs[@]}"; do
-# 	# printf "%s=%s\n" "$key" "${obs[$key]}"
-# 	this="${obs[$key]}"
-# 	total=$((total+this))
-# done
+for key in "${!obs[@]}"; do
+	# printf "%s=%s\n" "$key" "${obs[$key]}"
+	this="${obs[$key]}"
+	total=$((total+this))
+done
+echo "total: $total"
 # grid=""
+# # nums=""
 # for ((j=0; j<height; j++)); do
 # 	grid=""
+# 	# nums=""
 # 	for ((i=0; i<width; i++)); do
-# 		grid="${grid}${obs[$j.$i]}"
+# 		# grid="${grid}${visited[$j.$i]}"
+# 		if [[ ${obs["$j.$i"]} -eq 1 ]]; then
+# 			grid="${grid}0"
+# 		else
+# 			grid="${grid}${visited[$j.$i]}"
+# 		fi
+# 		# nums="${nums}${obs[$j.$i]}"
 # 	done
 # 	echo "$grid"
+# 	# echo "$grid  $nums"
 # done
 
-echo "total: $total"
+# echo "total: $total"
+
+now=$(date +%s)
+diff=$((now-started))
+echo "Completed in: $(convertsecs $diff)"

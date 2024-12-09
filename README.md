@@ -123,6 +123,21 @@ total: 41
 
 ***Part2***
 
-In the second part, the goal is to find all of the places in the map where adding an additional obstacle would get the character stuck in a loop. Rather than keeping track of if the character has been to a position or not, a new variable keeps track of the previous direction... this answer is not correct
+In the second part, the goal is to find all of the places in the map where adding an additional obstacle would get the character stuck in a loop. Rather than keeping track of if the character has been to a position or not, a new variable keeps track of the previous direction. Before taking each step, the spot is evaluated as an obstacle. If the potential obstacle makes the character encounter a previously visited space, in the same direction, it would get stuck in a loop, and that spot would return a 1. Summing all of those spaces, should give the correct answer, but it doesn't. There is still something wrong.
 
-
+```
+~/src/adventofcode2024 $ ./06/answer2.sh             
+....#.....
+....>>>>v#
+....^...v.
+..#.^...v.
+..>>>>v#v.
+..^.^.v.v.
+.#^0<<v<<.
+.>>>>>00#.
+#0<0<<<v..
+......#0..
+00:00:01[44]: v 8.7 => 9.7
+total: 6
+Completed in: 00:00:01
+```
