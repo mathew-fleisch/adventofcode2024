@@ -82,3 +82,47 @@ MXMXAXMASX
 
 Total: 9
 ```
+
+## Day 05
+
+skipped...
+
+## Day 06
+
+For [today's challenge](06), I copied the code I made for day04 to load in a file character, by character into an associative array with the x,y coordinates as the key.
+
+***Part1***
+
+In the first part, the character must navigate a 2d grid with obstacles represented as `#` and must always move in the same direction until an obstacle is encountered; turn right, and continue until off the map. Another array is saved with the same keys as the map, but the value of each element is a 1 if the character has been to that space, and a 0 if not. A sum of all of those positions returns the answer.
+
+```bash
+~/src/adventofcode2024 $ ./06/answer1.sh             
+....#.....
+.........#
+..........
+..#.......
+.......#..
+..........
+.#..^.....
+........#.
+#.........
+......#...
+
+0000000000
+0000111110
+0000100010
+0000100010
+0011111010
+0010101010
+0011111110
+0111111100
+0111111100
+0000000100
+total: 41
+```
+
+***Part2***
+
+In the second part, the goal is to find all of the places in the map where adding an additional obstacle would get the character stuck in a loop. Rather than keeping track of if the character has been to a position or not, a new variable keeps track of the previous direction... this answer is not correct
+
+
