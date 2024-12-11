@@ -91,22 +91,22 @@ right=">"
 # echo "start: [$starty.$startx] ${matrix[$starty.$startx]}"
 
 check_loop() {
-	local iteration
-	iteration=0
+	local this_iteration
 	local this_direction
 	local orig_direction
-	local position
+	local this_position
+	local next_y
+	local next_x
+	local this_turn
+	this_iteration=0
 	this_direction=$1
-	orig_direction=$this_direction
 	this_y=$2
 	this_x=$3
 	obs_y=$4
 	obs_x=$5
-	position="$this_y.$this_x"
-	local next_y
-	local next_x
-	local turn
-	turn="."
+	orig_direction=$this_direction
+	this_position="$this_y.$this_x"
+	this_turn="."
 	next_y=0
 	next_x=0
 	declare -A visited_so_far
@@ -120,35 +120,35 @@ check_loop() {
 
 	while [[ $this_y -lt $height ]] && [[ $this_x -lt $width ]] && [[ $this_y -ge 0 ]] && [[ $this_x -ge 0 ]]; do
 
-		if [[ $iteration -gt $((width*height)) ]]; then
+		if [[ $this_iteration -gt $((width*height)) ]]; then
 			obs["$obs_y.$obs_x"]=1
 			matrix["$obs_y.$obs_x"]=$orig_direction
 			return
 		fi
 		loop=""
-		IFS="." read -r this_y this_x <<< "$position"
+		IFS="." read -r this_y this_x <<< "$this_position"
 		next_y=$this_y
 		next_x=$this_x
 		case $this_direction in
 			"^")
 			# echo "up"
 			next_y=$((this_y-1))
-			turn=">"
+			this_turn=">"
 			;;
 			">")
 			# echo "right"
 			next_x=$((this_x+1))
-			turn="v"
+			this_turn="v"
 			;;
 			"v")
 			# echo "down"
 			next_y=$((this_y+1))
-			turn="<"
+			this_turn="<"
 			;;
 			"<")
 			# echo "left"
 			next_x=$((this_x-1))
-			turn="^"
+			this_turn="^"
 			;;
 		esac
 
@@ -158,7 +158,7 @@ check_loop() {
 			# grid="$(display_visited_grid)"
 			# clear
 			# echo "$grid"
-			# echo "$(convertsecs $diff)[$iteration]: $this_direction $y.$x => $next_y.$next_x"
+			# echo "$(convertsecs $diff)[$iteration]: $this_direction $this_y.$this_x => $next_y.$next_x"
 			obs["$obs_y.$obs_x"]=1
 			# echo 1
 			matrix["$obs_y.$obs_x"]=$orig_direction
@@ -167,14 +167,14 @@ check_loop() {
 
 
 		if [[ "${matrix[$next_y.$next_x]}" == "#" ]]; then
-			this_direction=$turn
+			this_direction=$this_turn
 			continue
 		fi
 		
 		visited_so_far["$this_y.$this_x.$this_direction"]=1
-		position="$next_y.$next_x"
+		this_position="$next_y.$next_x"
 		# sleep 1
-		((iteration++))
+		((this_iteration++))
 	done
 	# echo 0
 	matrix["$obs_y.$obs_x"]=$orig_direction
