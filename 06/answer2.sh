@@ -130,25 +130,25 @@ check_loop() {
 		next_y=$this_y
 		next_x=$this_x
 		case $this_direction in
-			"^")
+			"$up")
 			# echo "up"
 			next_y=$((this_y-1))
-			this_turn=">"
+			this_turn="$right"
 			;;
-			">")
+			"$right")
 			# echo "right"
 			next_x=$((this_x+1))
-			this_turn="v"
+			this_turn="$down"
 			;;
-			"v")
+			"$down")
 			# echo "down"
 			next_y=$((this_y+1))
-			this_turn="<"
+			this_turn="$left"
 			;;
-			"<")
+			"$left")
 			# echo "left"
 			next_x=$((this_x-1))
-			this_turn="^"
+			this_turn="$up"
 			;;
 		esac
 
@@ -220,28 +220,28 @@ while [[ $y -lt $height ]] && [[ $x -lt $width ]] && [[ $y -ge 0 ]] && [[ $x -ge
 	nexty=$y
 	nextx=$x
 	case $direction in
-		"^") 
+		"$up") 
 		# echo "up"
 		nexty=$((y-1))
-		turn=">"
+		turn="$right"
 		check_loop $turn $y $x $nexty $nextx
 		;;
-		">")
+		"$right")
 		# echo "right"
 		nextx=$((x+1))
-		turn="v"
+		turn="$down"
 		check_loop $turn $y $x $nexty $nextx
 		;;
-		"v")
+		"$down")
 		# echo "down"
 		nexty=$((y+1))
-		turn="<"
+		turn="$left"
 		check_loop $turn $y $x $nexty $nextx
 		;;
-		"<")
+		"$left")
 		# echo "left"
 		nextx=$((x-1))
-		turn="^"
+		turn="$up"
 		check_loop $turn $y $x $nexty $nextx
 		;;
 	esac
