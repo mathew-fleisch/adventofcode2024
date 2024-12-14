@@ -7,7 +7,7 @@ https://adventofcode.com/2024
 
 For [today's challenge](01), I split the two columns of data into two newline separated strings, and used the sort, uniq and grep tools to calculate frequency and difference between each column.
 
-```bash
+```text
 ~/src/adventofcode2024 $ ./01/answer1.sh          
 row[1]: 1:3 => 2
 row[2]: 2:3 => 1
@@ -35,7 +35,7 @@ skipped for now...
 
 For [today's challenge](03), I used regular expression matching in sed and grep to make the data easy to loop over.
 
-```bash
+```text
 ~/src/adventofcode2024 $ ./03/answer1.sh             
 Answer: 161
 
@@ -48,7 +48,7 @@ Answer: 48
 For [today's challenge](04), I split the data into a grid using an associative array where the key includes the x,y coordinates to each character. A nested for loop iterates around a potential match in the 8 possible neighbors, and tests if the word is XMAS. The second challenge didn't require the nested loop as there were only four possible matches.
 
 
-```bash
+```text
 
 Total: 18
 ~/src/adventofcode2024 $ ./04/answer1.sh
@@ -95,7 +95,7 @@ For [today's challenge](06), I copied the code I made for day04 to load in a fil
 
 In the first part, the character must navigate a 2d grid with obstacles represented as `#` and must always move in the same direction until an obstacle is encountered; turn right, and continue until off the map. Another array is saved with the same keys as the map, but the value of each element is a 1 if the character has been to that space, and a 0 if not. A sum of all of those positions returns the answer.
 
-```bash
+```text
 ~/src/adventofcode2024 $ ./06/answer1.sh             
 ....#.....
 .........#
@@ -140,4 +140,37 @@ In the second part, the goal is to find all of the places in the map where addin
 00:00:01[44]: v 8.7 => 9.7
 total: 6
 Completed in: 00:00:01
+```
+
+## Day 07
+
+For [today's challenge](07), I created a function that would convert decimal numbers to any base and used those characters to brute force each possibility. I also incorporated a technique for threading I learned from [Dave Eddy](https://ysap.sh) in [answer2.1.sh](07/answer2.1.sh) to speed up the processing of part2.
+
+```text
+~/src/adventofcode $ ./07/answer1.sh  
+0[MATCH]-> 190: 10 19
+1[MATCH]-> 3267: 81 40 27
+8[MATCH]-> 292: 11 6 16 20
+
+Total: 3749
+~/src/adventofcode $ ./07/answer2.sh   
+0[MATCH]-> 190: 10 19
+1[MATCH]-> 3267: 81 40 27
+3[MATCH]-> 156: 15 6
+4[MATCH]-> 7290: 6 8 6 15
+6[MATCH]-> 192: 17 8 14
+8[MATCH]-> 292: 11 6 16 20
+Total: 11387
+
+~/src/adventofcode $ ./07/answer2.1.sh 
+0[MATCH]-> 190: 10 19
+1[MATCH]-> 3267: 81 40 27
+2[NOPE]-> 83: 17 5
+3[MATCH]-> 156: 15 6
+4[MATCH]-> 7290: 6 8 6 15
+5[NOPE]-> 161011: 16 10 13
+6[MATCH]-> 192: 17 8 14
+7[NOPE]-> 21037: 9 7 18 13
+8[MATCH]-> 292: 11 6 16 20
+Total: 11387
 ```
