@@ -29,7 +29,15 @@ Total Frequency: 31
 
 ## Day 02
 
-skipped for now...
+For [today's challenge](02), I first iterated line by line to calculate each level. I then pulled that logic into a function that took an index and a space separated string of integers. I then split each row up into an array and passed each failed row to test without one element in the array.
+
+```text
+~/src/adventofcode2024 $ 02/answer1.sh
+Levels Safe: 2
+
+~/src/adventofcode2024 $ 02/answer2.sh
+Levels Safe: 4
+```
 
 ## Day 03
 
